@@ -1,0 +1,94 @@
+setfont /usr/share/kbd/consolefonts/ter-c16.psfu.gz
+vim /etc/pacman.d/mirrorlist
+pacman -Sy terminus-font
+setfont ter-v32n
+ls /sys/firmware/efi
+gdisk /dev/sda    (+200M EF00)* not for dual boot Windows
+gdisk -l /dev/sda
+mkfs.vfat /dev/sdaY* (not for dual boot Windows)
+mkfs.ext4 /dev/sdaX
+mount /dev/sdaX /mnt
+mkdir /mnt/boot
+mount /dev/sdaY /mnt/boot
+pacstrap /mnt base base-devel
+arch-chroot /mnt
+bootctl install
+pacman -Sy vim
+vim /boot/loader/loader.conf
+default arch
+timeout 4
+
+
+vim /boot/loader/entries/arch.conf
+title Arch Linux
+linux /vmlinuz-linux
+initrd /initramfs-linux.img
+options root=PARTUUID=******************* rw
+exit
+umount -R /mnt
+reboot
+
+
+timedatectl set-timezone Europe/Kiev
+ln -s /usr/share/zoneinfo/Europe/Kiev  /etc/localtime 
+hwclock --systohc --utc    ?????
+systemctl enable dhcpcd
+
+
+sudo vim /etc/hostname
+MYARCH
+
+
+vim /etc/locale.gen
+en_US.UTF-8
+en_US.ISO-8859-1
+ru_RU.UTF-8
+ru_RU.ISO-8859-5
+locale-gen
+
+
+vim /etc/locale.conf
+LANG=en_US.UTF-8
+или
+LANG=ru_RU.UTF-8
+
+
+vim /etc/vconsole.conf
+KEYMAP=ruwin_alt_sh-UTF-8
+FONT=cyr-sun16
+reboot
+
+
+useradd -mg users -G wheel,storage,power -s /bin/bash vasily
+passwd vasily
+
+
+vim /etc/sudoers
+%wheel ALL=(ALL) ALL
+reboot
+
+
+sudo pacman -S xorg-server xorg-xinit bash-completion xf86-video-amdgpu xf86-video-vesa mesa i3 dmenu alsa-utils pulseaudio links termite chromium firefox ttf-dejavu i3lock htop scrot zathura zathura-pdf-poppler zathura-djvu mpv aria2 wget curl youtube-dl youtube-viewer telegram-desktop sxiv imagemagick poppler ffmpeg libav ranger zip unzip rar unrar cmus 
+
+
+sudo vim /etc/X11/xorg.conf.d/00-keyboard.conf
+Section "InputClass"
+        Identifier "system-keyboard"
+        MatchIsKeyboard "on"
+        Option "XkbLayout" "us,ru"
+        Option "XkbModel" "pc104"
+        Option "XkbVariant" ""
+        Option "XkbOptions" "grp:alt_shift_toggle"
+EndSection
+
+
+vim ~/.xinitrc
+exec i3
+
+
+startx
+
+
+
+
+
